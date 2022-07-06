@@ -24,6 +24,7 @@ __code const uint16_t timing[IMAGES] =
 __code const uint8_t images[IMAGES][FRAMES * 3 * 8] =
 	{"THIS IS WHERE THE IMAGE STARTS"};
 
+uint16_t DEMOSPEED = 32000;
 // Are we doing the slow demo
 uint8_t slow = 1;
 // How many timer 1 cycles since the image started?
@@ -84,7 +85,7 @@ void Ext1_Isr() __interrupt(0) __using(2)
   if (slow) {
     if (counter < DEMOSPEED) slow = 0;
   } else {
-    if (counter > 2*DEMOSPEED) slow = 1;
+    if (counter > DEMOSPEED) slow = 1;
   }
   step = counter/FRAMES;
   counter2 = step;

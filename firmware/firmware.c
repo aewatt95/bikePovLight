@@ -104,8 +104,6 @@ void ISR_Timer0() __interrupt(1) __using(2)
       counter2 = step;
       frame++;
   }
-  TH0=0xff; // increase timer resolution
-  TL0=0x80;
 }
 
 void Ext2_Isr() __interrupt(2) __using(2)

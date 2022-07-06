@@ -11,7 +11,6 @@
 #define RELOAD_T1_HI 0xE4
 #define RELOAD_T1_LO 0x06
 #define DEMO10MS 10
-#define DEMOSPEED 10000
 
 #define Nop() \
      __asm     \

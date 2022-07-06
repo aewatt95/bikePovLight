@@ -95,6 +95,8 @@ void Ext1_Isr() __interrupt(0) __using(2)
 
 void ISR_Timer0() __interrupt(1) __using(2)
 {
+  TH0=0xff; // increase timer resolution
+  TL0=0xA0;
   counter++;
   counter2--;
   if (counter > 2*DEMOSPEED) { slow = 1; counter = DEMOSPEED; };
@@ -258,6 +260,7 @@ void main () {
 
 	// Timer
 	TMOD = 0x11;
+  AUXR |= 0b10000000;
 	TR0 = 1;
 	ET0 = 1; // enable timer interrupt
 	TR1 = 1;

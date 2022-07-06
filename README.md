@@ -29,3 +29,5 @@ Navigate to the ```src``` directory and run
 ```
 python3 bikePovTool.py
 ```
+
+![Ui design](/doc/settings.jpg)

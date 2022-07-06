@@ -165,15 +165,18 @@ inline void setlight(const uint8_t *led_ptr) {
 	P2 = led_ptr[7]; P1_4 = 1; P1_4 = 0;
 }
 #define SETLIGHT(image,p) \
-	P2 = image[i++]; P1_0 = 1; P1_0 = 0; \
-	P2 = image[i++]; P1_1 = 1; P1_1 = 0; \
-	P2 = image[i++]; P1_2 = 1; P1_2 = 0; \
-	P2 = image[i++]; P1_3 = 1; P1_3 = 0; \
+	i=i+7; P2 = image[i]; P1_4 = 1; P1_4 = 0; \
+	i=i-4; P2 = image[i]; P1_3 = 1; P1_3 = 0; \
+	i=i+3; P2 = image[i]; P1_5 = 1; P1_5 = 0; \
+	i=i-4; P2 = image[i]; P1_2 = 1; P1_2 = 0; \
+	i=i+3; P2 = image[i]; P1_6 = 1; P1_6 = 0; \
+	i=i-4; P2 = image[i]; P1_1 = 1; P1_1 = 0; \
+	i=i+3; P2 = image[i]; P1_7 = 1; P1_7 = 0; \
+	i=i-4; P2 = image[i]; P1_0 = 1; P1_0 = 0; \
+  i=i+8;
+
+
                                              \
-	P2 = image[i++]; P1_7 = 1; P1_7 = 0; \
-	P2 = image[i++]; P1_6 = 1; P1_6 = 0; \
-	P2 = image[i++]; P1_5 = 1; P1_5 = 0; \
-	P2 = image[i++]; P1_4 = 1; P1_4 = 0; \
 
 void set_demobit(int16_t a) {
   a = (a + 32) % 64;

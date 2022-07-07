@@ -5,14 +5,17 @@ from PIL import Image, ImageDraw
 class MaskGenerator():
     def __init__(self, circleSize=2, sideSize=400, ledCount=42):
         self.circleSize = circleSize
-        self.sideSize = sideSize
         self.ledCount = ledCount
-
         self.circleOffset = self.circleSize/2
-        self.center = self.sideSize/2
+        self.backgroundPath = ""
+        self.setSideSize(sideSize)
+        self.reset()
 
-        self.image = Image.new(mode="RGB", size=(sideSize, sideSize))
-        self.draw = ImageDraw.Draw(self.image)
+    def setSideSize(self, sideSize):
+        self.sideSize = sideSize
+        self.center = self.sideSize/2
+        self.reset()
+        self._reloadBackground()
 
     def createRaster(self, xMax, yMax):
         xStep = self.sideSize/(xMax-1)
@@ -40,7 +43,7 @@ class MaskGenerator():
                 stopX = self.center + (sin(phi)*radius) + self.circleOffset
                 stopY = self.center + (cos(phi)*radius) + self.circleOffset
                 coordinates = (floor(startX), floor(startY), floor(stopX), floor(stopY))
-                self.draw.ellipse(coordinates, fill=(255,255,255))
+                self.draw.ellipse(coordinates, fill=(255,255,255,0))
 
     def drawBar(self, pitch, offset):
         barThickness = self.sideSize*0.05
@@ -51,7 +54,7 @@ class MaskGenerator():
         stopX = self.center + (barLength/2) - offset*ledDistance
         stopY = self.center + (barThickness/2) - pitch*ledDistance
         coordinates = (floor(startX), floor(startY), floor(stopX), floor(stopY))
-        self.draw.rectangle(coordinates, fill=(32,32,32))
+        self.draw.rectangle(coordinates, fill=(32,32,32,200), outline=(200,200,200,200))
 
     def drawMagnet(self, clock):
         phi = pi-((2*pi)/12.0)*clock
@@ -63,10 +66,29 @@ class MaskGenerator():
         stopY = self.center + (cos(phi)*radius) + magnetSize
         coordinates = (floor(startX), floor(startY), floor(stopX), floor(stopY))
         print(coordinates)
-        self.draw.ellipse(coordinates, fill=(255,0,0))
+        self.draw.ellipse(coordinates, fill=(64,64,64,200), outline=(200,200,200,200))
+
+    def drawOverlay(self, filePath):
+        try:
+            image = Image.open(filePath)
+        except Exception as e:
+            print(f"Could not open image file: {e}")
+            return
+        image.resize((self.sideSize, self.sideSize))
 
     def reset(self):
-        self.image.paste('black', (0,0,self.sideSize, self.sideSize))
+        self.image = Image.new(mode="RGBA", size=(self.sideSize, self.sideSize), color=(0,0,0,255))
+        self.draw = ImageDraw.Draw(self.image)
+
+    def _reloadBackground(self):
+        self.background = Image.new("RGBA", (self.sideSize, self.sideSize), (255,0,0,255))
+        if self.backgroundPath != "":
+            self.background = Image.open(self.backgroundPath).resize((self.sideSize, self.sideSize)).convert("RGBA")
+
+    def setBackground(self, imagePath=""):
+        self.backgroundPath = imagePath
+        if self.backgroundPath != "":
+            self._reloadBackground()
 
     def get(self):
-        return self.image
+        return Image.alpha_composite(self.background, self.image).convert("RGB")

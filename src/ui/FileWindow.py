@@ -3,11 +3,12 @@ import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gio, GdkPixbuf
 
+from common import Common
+
 class FileWindow(Gtk.Box):
     def __init__(self):
         super().__init__(Gtk.Orientation.HORIZONTAL)
 
-        self.fileList = []
         imageFrame = Gtk.Frame()
         self.image = Gtk.Image()
         addButton = Gtk.Button.new_with_label("Add")
@@ -27,25 +28,25 @@ class FileWindow(Gtk.Box):
         self.pack_end(rightBox, True, True, 6)
 
     def imageClicked(self, listBox: Gtk.ListBox, row: Gtk.ListBoxRow):
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename=self.fileList[row.get_index()])
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file(filename=Common.fileList[row.get_index()])
         pixbuf = pixbuf.scale_simple(400,400,GdkPixbuf.InterpType.BILINEAR)
         self.image.set_from_pixbuf(pixbuf=pixbuf)
 
     def sortUp(self, element: Gtk.Button):
         rowIndex = element.get_parent().get_parent().get_index()
-        self.fileList.insert(rowIndex-1, self.fileList.pop(rowIndex))
+        Common.fileList.insert(rowIndex-1, Common.fileList.pop(rowIndex))
         self.recreateImageList()
 
     def sortDown(self, element: Gtk.Button):
         rowIndex = element.get_parent().get_parent().get_index()
-        self.fileList.insert(rowIndex+1, self.fileList.pop(rowIndex))
+        Common.fileList.insert(rowIndex+1, Common.fileList.pop(rowIndex))
         self.recreateImageList()
 
     def deleteFile(self, element: Gtk.Button):
         rowIndex = element.get_parent().get_parent().get_index()
-        self.fileList.pop(rowIndex)
+        Common.fileList.pop(rowIndex)
         self.recreateImageList()
-        if len(self.fileList) == 0:
+        if len(Common.fileList) == 0:
             self.image.clear()
         else:
             nextSelect = rowIndex
@@ -58,13 +59,14 @@ class FileWindow(Gtk.Box):
         fileDialog = Gtk.FileChooserDialog(action=Gtk.FileChooserAction.OPEN)
         fileDialog.set_title("Please choose an image file")
         fileDialog.add_buttons(Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK)
-        if len(self.fileList) != 0:
-            print("Setting folder to " + str(("".join(self.fileList[-1][:self.fileList[-1].rindex("/")]))))
-            fileDialog.set_current_folder("".join(self.fileList[-1][:self.fileList[-1].rindex("/")]))
+        if len(Common.fileList) != 0:
+            print("Setting folder to " + str(("".join(Common.fileList[-1][:Common.fileList[-1].rindex("/")]))))
+            fileDialog.set_current_folder("".join(Common.fileList[-1][:Common.fileList[-1].rindex("/")]))
 
         imageFiler = Gtk.FileFilter()
         imageFiler.set_name("Image files")
         imageFiler.add_mime_type("image/jpg")
+        imageFiler.add_mime_type("image/jpeg")
         imageFiler.add_mime_type ("image/png")
 
 
@@ -73,7 +75,7 @@ class FileWindow(Gtk.Box):
         response = fileDialog.run()
 
         if response == Gtk.ResponseType.OK:
-            self.fileList.append(fileDialog.get_filename())
+            Common.fileList.append(fileDialog.get_filename())
             self.recreateImageList()
 
         fileDialog.destroy()
@@ -83,7 +85,7 @@ class FileWindow(Gtk.Box):
             print(row.get_index())
             self.imageList.remove(row)
 
-        for index, element in enumerate(self.fileList):
+        for index, element in enumerate(Common.fileList):
             rowLabel = Gtk.Label(label=element.split("/")[-1])
             hbox = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL)
             Gtk.StyleContext.add_class(hbox.get_style_context(), "linked")
@@ -98,7 +100,7 @@ class FileWindow(Gtk.Box):
 
             if index == 0:
                 upButton.set_sensitive(False)
-            if index == len(self.fileList)-1:
+            if index == len(Common.fileList)-1:
                 downButton.set_sensitive(False)
 
             hbox.pack_start(rowLabel, True, True, 6)

@@ -1,6 +1,4 @@
 import os
-from tkinter import Label
-from turtle import left, right
 import gi
 
 

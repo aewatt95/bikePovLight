@@ -1,6 +1,4 @@
 from math import cos, pi, sin, floor
-from tracemalloc import start
-from types import coroutine
 from PIL import Image, ImageDraw
 
 

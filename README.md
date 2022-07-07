@@ -30,4 +30,8 @@ Navigate to the ```src``` directory and run
 python3 bikePovTool.py
 ```
 
-![Ui design](/doc/settings.jpg)
+![UI Settings](/doc/settings.jpg)
+
+![UI Images](/doc/images.jpg)
+
+![UI Programming](/doc/programming.jpg)
